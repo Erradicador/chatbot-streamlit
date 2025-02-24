@@ -3,12 +3,16 @@ import streamlit as st
 st.title("Mi Chatbot con Streamlit")
 st.write("¡Bienvenido a mi chatbot en Streamlit!")
 import streamlit as st
+import openai
 
-# Configuración del chatbot
-st.title("🤖 Chatbot con Streamlit")
-st.write("¡Bienvenido! Escribe un mensaje y el chatbot responderá.")
+# Configurar la API de OpenAI (coloca tu clave de API)
+openai.api_key = "TU_CLAVE_API"
 
-# Inicializar el historial de conversación
+# Configuración de la app
+st.title("🤖 IA en Streamlit")
+st.write("Hazle una pregunta a la IA y te responderá.")
+
+# Inicializar historial de conversación
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -18,7 +22,7 @@ for message in st.session_state.messages:
         st.write(message["content"])
 
 # Entrada del usuario
-user_input = st.text_input("Escribe tu mensaje:")
+user_input = st.text_input("Escribe tu pregunta:")
 
 if user_input:
     # Guardar y mostrar el mensaje del usuario
@@ -26,10 +30,16 @@ if user_input:
     with st.chat_message("user"):
         st.write(user_input)
 
-    # Respuesta del chatbot (ejemplo básico)
-    response = f"🤖 Respuesta automática: {user_input}"
-    
-    # Guardar y mostrar la respuesta del chatbot
-    st.session_state.messages.append({"role": "bot", "content": response})
-    with st.chat_message("bot"):
-        st.write(response)
+    # Llamar a la IA de OpenAI
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[{"role": "system", "content": "Eres un asistente útil."}] + st.session_state.messages
+    )
+
+    ai_response = response["choices"][0]["message"]["content"]
+
+    # Guardar y mostrar la respuesta de la IA
+    st.session_state.messages.append({"role": "assistant", "content": ai_response})
+    with st.chat_message("assistant"):
+        st.write(ai_response)
+
