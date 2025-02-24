@@ -27,5 +27,3 @@ if openai_api_key:
             st.error(f"Error: {e}")
 else:
     st.warning("Por favor, ingresa tu API Key para continuar.")
-
-
